@@ -4,7 +4,7 @@
 
 #' @export
 #' @param genotype_name (character) flybase stock genotype name out of genotype table 
-#' @param output (character) choose type of return, "text" for a text version, "table" for a table with each allele as a row, "html" for a html version of the name with links to flybase
+#' @param output (character) choose type of return, "text" for a text version, "table" for a table with each allele as a row, "html" for a html version of the name with links to flybase, "ART" for entries for the author reagent table
 #' @return depending on output
 #' @examples \dontrun{
 #' 
@@ -31,7 +31,7 @@ fb_clean_stock_name <- function(genotype_name, output = "text") {
     
     n= c(0:(length(y)/2-1))*2+1
     for (i in n) {
-      temp= str_split(y[i], ":")[[1]]
+      temp= stringr::str_split(y[i], ":")[[1]]
       G=rbind ( G, c(temp[1],temp[2],y[i+1]) )
     }
   }
@@ -44,19 +44,33 @@ fb_clean_stock_name <- function(genotype_name, output = "text") {
     res = G %>% transmute (temp2= paste0(temp,extra) )
 
     res = res[,1]
-    res = str_replace_all(res, "<up>", "<sup>" )
-    res = str_replace_all(res, "</up>", "</sup>" )  
+    res = stringr::str_replace_all(res, "<up>", "<sup>" )
+    res = stringr::str_replace_all(res, "</up>", "</sup>" )  
     res = paste(res,collapse="")
    }else if (output == "text"){
     ###these lines need dplyr
     res = G %>% transmute (temp= paste0(allele,extra) ) 
     
     res = res[,1]
-    res = str_replace_all(res, "<up>", "[" )
-    res = str_replace_all(res, "</up>", "]" )
+    res = stringr::str_replace_all(res, "<up>", "[" )
+    res = stringr::str_replace_all(res, "</up>", "]" )
     res = paste(res,collapse="")
   }else if (output == "table"){
     res=G
+  }else if (output == "ART"){
+    Identifiers=G%>% 
+      filter (!is.na (link))%>%
+      transmute (temp= paste0 ('FLYB:',link))
+    Identifiers = paste(Identifiers[,1],collapse="; ") 
+    
+    res = G %>% transmute (temp= paste0(allele,extra) )
+    res = res[,1]
+    res = stringr::str_replace_all(res, "<up>", "[" )
+    res = stringr::str_replace_all(res, "</up>", "]" )
+    res = paste(res,collapse="")
+    res = paste0("Genotype: ",res)
+    res =data.frame (Identifiers, "additional_information" =res)
+
   }  
   res
 }
