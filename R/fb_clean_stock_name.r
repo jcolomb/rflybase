@@ -31,7 +31,7 @@ fb_clean_stock_name <- function(genotype_name, output = "text") {
     
     n= c(0:(length(y)/2-1))*2+1
     for (i in n) {
-      temp= stringr::str_split(y[i], ":")[[1]]
+      temp= stringr::str_split(y[i], "(?<!:):(?!:)")[[1]] # only single colon but not double are used for splitting
       G=rbind ( G, c(temp[1],temp[2],y[i+1]) )
     }
   }
@@ -74,3 +74,5 @@ fb_clean_stock_name <- function(genotype_name, output = "text") {
   }  
   res
 }
+
+
