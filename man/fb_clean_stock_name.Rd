@@ -10,7 +10,7 @@ fb_clean_stock_name(genotype_name, output = "text")
 \arguments{
 \item{genotype_name}{(character) flybase stock genotype name out of genotype table}
 
-\item{output}{(character) choose type of return, "text" for a text version, "table" for a table with each allele as a row, "html" for a html version of the name with links to flybase}
+\item{output}{(character) choose type of return, "text" for a text version, "table" for a table with each allele as a row, "html" for a html version of the name with links to flybase, "ART" for entries for the author reagent table}
 }
 \value{
 depending on output
